@@ -15,6 +15,10 @@ h1 {
 	background-color: white;
 }
 
+.links {
+	stroke: red;
+}
+
 div.tooltip {
   position: absolute;
   text-align: center;
