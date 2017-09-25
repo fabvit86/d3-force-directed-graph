@@ -89,6 +89,25 @@ d3.json(url, (error, data) => {
   		})
   	)
 
+  // tooltip div:
+  const tooltip = d3.select('#mainContainer').append("div")
+  									.classed("tooltip", true)
+  									.style("opacity", 0) // start invisible
+  nodeWrapper
+  	.on("mouseover", function(d) {
+    	tooltip.transition()
+    		.duration(300)
+    		.style("opacity", 1) // show the tooltip
+    	tooltip.html(d.country)
+      	.style("left", (d3.event.pageX - d3.select('.tooltip').node().offsetWidth - 5) + "px")
+        .style("top", (d3.event.pageY - d3.select('.tooltip').node().offsetHeight) + "px");
+    })
+    .on("mouseleave", function(d) {
+    	tooltip.transition()
+    		.duration(200)
+    		.style("opacity", 0)
+    })
+
   simulation
   	.nodes(nodes)
   	.on("tick", () => {
