@@ -26,7 +26,7 @@ const simulation = d3.forceSimulation()
 				// link force (pushes linked nodes together or apart according to the desired link distance):
 				.force("link", d3.forceLink())
 				// prevent nodes from ovelapping, treating them as circles with the given radius:
-				.force("collide", d3.forceCollide((nodeWidth + 1) / 2))
+				.force("collide", d3.forceCollide((nodeWidth + 2) / 2))
 
 const url = 'https://raw.githubusercontent.com/DealPete/forceDirected/master/countries.json'
 d3.json(url, (error, data) => {
@@ -62,6 +62,8 @@ d3.json(url, (error, data) => {
   nodeWrapper
   	.append("image")
   		.attr("href", d => "images/flag-" + d.code + ".png")
+  		.attr("height", nodeHeight)
+  		.attr("width", nodeWidth)
 
   // node dragging:
   nodeWrapper
@@ -93,15 +95,15 @@ d3.json(url, (error, data) => {
   		// set each node's position on each tick of the simulation:
   		nodeWrapper.attr("transform", d => "translate(" + getNodeXCoordinate(d.x) + "," + getNodeXCoordinate(d.y) + ")")
   		// set start (x1,y1) and point (x2,y2) coordinate of each link on each tick of the simulation:
-  		link.attr("x1", d => d.source.x)
-  		link.attr("y1", d => d.source.y)
-  		link.attr("x2", d => d.target.x)
-  		link.attr("y2", d => d.target.y)
+  		link.attr("x1", d => d.source.x + nodeWidth / 2)
+  		link.attr("y1", d => d.source.y + nodeHeight / 2)
+  		link.attr("x2", d => d.target.x + nodeWidth / 2)
+  		link.attr("y2", d => d.target.y + nodeHeight / 2)
   	})
 
   // pass the links to the link force:
   simulation
   	.force("link")
   	.links(links)
-  		.distance(25)
+  		.distance(45)
 })
