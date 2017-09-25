@@ -19,6 +19,12 @@ h1 {
 	stroke: red;
 }
 
+.node {
+	fill: transparent;
+	stroke: black;
+	stroke-width: 1px;
+}
+
 div.tooltip {
   position: absolute;
   text-align: center;

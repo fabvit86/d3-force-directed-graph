@@ -1,9 +1,9 @@
 'use strict'
 
-const chartHeight = 800,
-		  chartWidth = 900,
-		  nodeHeight = 15,
-		  nodeWidth = 20
+const chartHeight        = 800,
+		  chartWidth         = 900,
+		  nodeHeight         = 11,
+		  nodeWidth          = 16
 
 const svg = d3.select("#svgchart")
 svg.attr("height", chartHeight)
@@ -42,44 +42,56 @@ d3.json(url, (error, data) => {
 					    .enter().append("line") // line to connect nodes
 					      .attr("stroke-width", 1) // line width
 
+  // use a g element to contain a rect and an image for every node:
+  const nodeWrapper = svg.append("g")
+									      .attr("class", "nodes")
+									    .selectAll(".node")
+									    .data(nodes)
+									    .enter().append("g")
+									    .attr("class", "nodeWrapper")
+
 	// add nodes (rects):
-	const node = svg.append("g")
-					      .attr("class", "nodes")
-					    .selectAll("rect")
-					    .data(nodes)
-					    .enter().append("rect")
+	const node = nodeWrapper
+					    	.append("rect")
+					    	.attr("id", d => d.code)
+					    	.attr("class", "node")
 					    	.attr("width", nodeWidth)
 					    	.attr("height", nodeHeight)
-					    	.attr("fill", "black")
-					    	// node dragging:
-					    	.call(d3.drag()
-					    		.on("start", d => {
-					    			// heat the simulation:
-					    			if (!d3.event.active) simulation.alphaTarget(0.2).restart()
-					    			// set fixed x and y coordinates:	
-					    			d.fx = d.x
-					    			d.fy = d.y
-					    		})
-					    		.on("drag", d => {
-					    			// by fixing its position, this disables the forces acting on the node:
-					    			d.fx = d3.event.x
-					    			d.fy = d3.event.y
-					    		})
-					    		.on("end", d => {
-					    			// stop simulation:
-					    			if (!d3.event.active) simulation.alphaTarget(0)
-					    			// reactivate the force on the node:
-					    			d.fx = null
-					    			d.fy = null
-					    		})
-					    	)
+  
+  // add flag images:
+  nodeWrapper
+  	.append("image")
+  		.attr("href", d => "images/flag-" + d.code + ".png")
+
+  // node dragging:
+  nodeWrapper
+  	.call(d3.drag()
+  		.on("start", d => {
+  			// heat the simulation:
+  			if (!d3.event.active) simulation.alphaTarget(0.2).restart()
+  			// set fixed x and y coordinates:	
+  			d.fx = d.x
+  			d.fy = d.y
+  		})
+  		.on("drag", d => {
+  			// by fixing its position, this disables the forces acting on the node:
+  			d.fx = d3.event.x
+  			d.fy = d3.event.y
+  		})
+  		.on("end", d => {
+  			// stop simulation:
+  			if (!d3.event.active) simulation.alphaTarget(0)
+  			// reactivate the force on the node:
+  			d.fx = null
+  			d.fy = null
+  		})
+  	)
 
   simulation
   	.nodes(nodes)
   	.on("tick", () => {
   		// set each node's position on each tick of the simulation:
-  		node.attr("x", d => getNodeXCoordinate(d.x))
-  		node.attr("y", d => getNodeYCoordinate(d.y))
+  		nodeWrapper.attr("transform", d => "translate(" + getNodeXCoordinate(d.x) + "," + getNodeXCoordinate(d.y) + ")")
   		// set start (x1,y1) and point (x2,y2) coordinate of each link on each tick of the simulation:
   		link.attr("x1", d => d.source.x)
   		link.attr("y1", d => d.source.y)
